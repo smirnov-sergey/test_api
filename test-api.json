@@ -1,0 +1,138 @@
+{
+  "variables": [],
+  "info": {
+    "name": "test-api",
+    "description": ""
+  },
+  "item": [
+    {
+      "name": "/auth",
+      "request": {
+        "url": "http://testapi.ru/auth",
+        "method": "GET",
+        "header": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*",
+            "description": ""
+          },
+          {
+            "key": "Access-Control-Allow-Methods",
+            "value": "*",
+            "description": ""
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": ""
+          }
+        ],
+        "body": {
+          "login": "user",
+          "password": "*******"
+        },
+        "description": "Авторизация"
+      },
+      "response": [
+        {
+          "status": "200",
+          "token": "abcdef"
+        }
+      ]
+    },
+    {
+      "name": "/get-user",
+      "request": {
+        "url": "http://testapi.ru/get-user/?token=",
+        "method": "GET",
+        "header": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*",
+            "description": ""
+          },
+          {
+            "key": "Access-Control-Allow-Methods",
+            "value": "*",
+            "description": ""
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": ""
+          }
+        ],
+        "body": {
+          "username": "user",
+          "token": "*******"
+        },
+        "description": "Получение данных пользователя"
+      },
+      "response": [
+        {
+          "status": "OK",
+          "active": "1",
+          "blocked": false,
+          "created_at": 1587457590,
+          "id": 23,
+          "name": "Ivanov Ivan",
+          "permissions": [
+            {
+              "id": 1,
+              "permission": "comment"
+            },
+            {
+              "id": 2,
+              "permission": "upload photo"
+            },
+            {
+              "id": 3,
+              "permission": "add event"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "/update",
+      "request": {
+        "url": "http://testapi.ru/user/update?token=",
+        "method": "POST",
+        "header": [
+          {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*",
+            "description": ""
+          },
+          {
+            "key": "Access-Control-Allow-Methods",
+            "value": "*",
+            "description": ""
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": ""
+          }
+        ],
+        "body": {
+          "active": "1",
+          "blocked": true,
+          "name": "Petr Petrovich",
+          "permissions": [
+            {
+              "id": 1,
+              "permission": "comment"
+            }
+          ]
+        },
+        "description": "Отправка данных пользователя"
+      },
+      "response": [
+        {
+          "status": "OK"
+        }
+      ]
+    }
+  ]
+}
