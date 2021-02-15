@@ -33,7 +33,7 @@ class AuthService
                 return true;
             }
 
-            throw new RuntimeException('Неверный токен', 401);
+            throw new RuntimeException('Invalid token', 401);
         } catch (Exception $e) {
             throw $e;
         }

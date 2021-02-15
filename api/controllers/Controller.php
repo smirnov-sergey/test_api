@@ -1,14 +1,13 @@
 <?php
 
-namespace api\models;
+namespace api\controllers;
 
 use api\services\AuthService;
-use GuzzleHttp\Client;
 use RuntimeException;
 
 require_once 'api/services/AuthService.php';
 
-abstract class UsersApi
+abstract class Controller
 {
     public $request_uri = [];
     public $request_params = [];
@@ -19,13 +18,10 @@ abstract class UsersApi
     /** @var AuthService */
     protected $auth_service;
 
-    /** @var Client */
-    protected $client;
 
     public function __construct()
     {
         $this->auth_service = new AuthService;
-        $this->client = new Client(['base_uri' => 'http://testapi.ru']);
         $this->request_uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
         $this->request_params = $_REQUEST;
 
@@ -42,70 +38,6 @@ abstract class UsersApi
         } else {
             throw new RuntimeException('Invalid Method', 405);
         }
-    }
-
-    protected function response($status = 500)
-    {
-        header("HTTP/1.1 " . $status . " " . $this->requestStatus($status));
-
-        if ($this->requestStatus($status) === 200) {
-            return json_encode(['status' => $status]);
-        }
-
-        throw new RuntimeException('Неверный статус');
-    }
-
-    protected function responseAuth($status)
-    {
-        if ($this->requestStatus($status) === 200) {
-            $token = $this->auth_service->getToken();
-
-            return json_encode(['status' => $status, 'token' => $token]);
-        }
-
-        throw new RuntimeException('Неверный статус');
-    }
-
-    protected function responseGetUser($username)
-    {
-        if ($username === 'ivanov') {
-            $data = [
-                'status' => 'OK',
-                'active' => '1',
-                'blocked' => false,
-                'created_at' => 1587457590,
-                'id' => 23,
-                'name' => 'Ivanov Ivan',
-                'permissions' => [
-                    'id' => 1,
-                    'permission' => 'comment'
-                ]
-            ];
-
-            return json_encode($data);
-        }
-
-        throw new RuntimeException('Пользователь не найден');
-    }
-
-    protected function responseUserUpdate($data)
-    {
-        if ($data) {
-            $data = [
-                'status' => 'OK',
-                'active' => '1',
-                'blocked' => true,
-                'name' => 'Petr Petrovich',
-                'permissions' => [
-                    'id' => 1,
-                    'permission' => 'comment'
-                ]
-            ];
-
-            return json_encode($data);
-        }
-
-        throw new RuntimeException('Данные отсутствуют');
     }
 
     private function getAction()
@@ -145,9 +77,72 @@ abstract class UsersApi
         return ($status[$code]) ?: $status[500];
     }
 
+
+    protected function response($status = 500)
+    {
+        if ($this->requestStatus($status) === 200) {
+            return json_encode(['status' => $status]);
+        }
+
+        throw new RuntimeException('Invalid status');
+    }
+
+    protected function responseAuth($status)
+    {
+        if ($this->requestStatus($status) === 200) {
+            $token = $this->auth_service->getToken();
+
+            return json_encode(['status' => $status, 'token' => $token]);
+        }
+
+        throw new RuntimeException('Invalid status');
+    }
+
+    protected function responseGetUser($username)
+    {
+        if ($username === 'ivanov') {
+            $data = [
+                'status' => 'OK',
+                'active' => '1',
+                'blocked' => false,
+                'created_at' => 1587457590,
+                'id' => 23,
+                'name' => 'Ivanov Ivan',
+                'permissions' => [
+                    'id' => 1,
+                    'permission' => 'comment'
+                ]
+            ];
+
+            return json_encode($data);
+        }
+
+        throw new RuntimeException('User is not found');
+    }
+
+    protected function responseUserUpdate($data)
+    {
+        if ($data) {
+            $data = [
+                'status' => 'OK',
+                'active' => '1',
+                'blocked' => true,
+                'name' => 'Petr Petrovich',
+                'permissions' => [
+                    'id' => 1,
+                    'permission' => 'comment'
+                ]
+            ];
+
+            return json_encode($data);
+        }
+
+        throw new RuntimeException('No data available');
+    }
+
     abstract protected function actionAuth($login, $password);
 
-    abstract protected function actionGetUser($username);
+    abstract protected function actionGetUser($username, $token);
 
-    abstract protected function actionUserUpdate($data);
+    abstract protected function actionUpdateUser($data);
 }

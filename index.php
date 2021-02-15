@@ -1,11 +1,13 @@
 <?php
 
-use api\controllers\UsersController;
-use GuzzleHttp\Client;
+use api\controllers\ApiController;
+use controllers\SiteController;
+
+//use GuzzleHttp\Client;
 
 require_once 'vendor/autoload.php';
-require_once 'api/controllers/UsersController.php';
-require_once 'api/models/UsersApi.php';
+require_once 'api/controllers/ApiController.php';
+require_once 'controllers/SiteController.php';
 
 
 /**
@@ -27,10 +29,16 @@ require_once 'api/models/UsersApi.php';
 //print_r(get_class_methods($response));
 //echo '</pre>';
 
-
 try {
-    $users_api = new UsersController();
-    echo $users_api->run();
+    $request_uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+
+    if ($request_uri[0] == '/api') {
+        $app = new ApiController();
+        echo $app->run();
+    } else {
+        $app = new SiteController();
+        echo $app->run();
+    }
 } catch (Exception $e) {
-    echo json_encode(array('error' => $e->getMessage()));
+    echo json_encode(['error' => $e->getMessage()]);
 }
