@@ -7,9 +7,14 @@ use RuntimeException;
 
 require_once 'api/services/AuthService.php';
 
+/**
+ * Class Controller
+ * @package api\controllers
+ * @deprecated
+ */
 abstract class Controller
 {
-    public $request_uri = [];
+    public $request_uri = '';
     public $request_params = [];
 
     protected $method = '';
@@ -18,51 +23,6 @@ abstract class Controller
     /** @var AuthService */
     protected $auth_service;
 
-
-    public function __construct()
-    {
-        $this->auth_service = new AuthService;
-        $this->request_uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-        $this->request_params = $_REQUEST;
-
-        $this->method = $_SERVER['REQUEST_METHOD'];
-    }
-
-    public function run()
-    {
-        $this->action = $this->getAction();
-
-        // Если метод определен в дочернем классе API
-        if (method_exists($this, $this->action)) {
-            return $this->{$this->action}();
-        } else {
-            throw new RuntimeException('Invalid Method', 405);
-        }
-    }
-
-    private function getAction()
-    {
-        $method = $this->method;
-
-        switch ($method) {
-            case 'GET':
-                if ($this->request_uri[0] === 'auth') {
-                    return 'actionAuth';
-                } elseif ($this->request_uri[0] === 'get-user') {
-                    return 'actionGetUser';
-                } else
-                    return null;
-                break;
-            case 'PUT':
-            case 'POST':
-                if (($this->request_uri[0] . '/' . $this->request_uri[1]) === 'user/update') {
-                    return 'actionUserUpdate';
-                }
-                break;
-            default:
-                return null;
-        }
-    }
 
     private function requestStatus($code): string
     {
@@ -76,7 +36,6 @@ abstract class Controller
 
         return ($status[$code]) ?: $status[500];
     }
-
 
     protected function response($status = 500)
     {
@@ -140,7 +99,7 @@ abstract class Controller
         throw new RuntimeException('No data available');
     }
 
-    abstract protected function actionAuth($login, $password);
+    abstract protected function actionAuth();
 
     abstract protected function actionGetUser($username, $token);
 

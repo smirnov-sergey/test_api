@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://D:/Projects/work/capital_web/.idea/capital_web.iml" filepath="D:/Projects/work/capital_web/.idea/capital_web.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/test_api.iml" filepath="$PROJECT_DIR$/.idea/test_api.iml" />
     </modules>
   </component>

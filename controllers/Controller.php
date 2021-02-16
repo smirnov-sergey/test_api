@@ -32,7 +32,6 @@ abstract class Controller
     {
         $this->action = $this->getAction();
 
-        // Если метод определен в дочернем классе API
         if (method_exists($this, $this->action)) {
             return $this->{$this->action}();
         } else {
@@ -42,9 +41,7 @@ abstract class Controller
 
     private function getAction()
     {
-        $method = $this->method;
-
-        switch ($method) {
+        switch ($this->method) {
             case 'GET':
                 if ($this->request_uri[0] === 'index') {
                     return 'actionIndex';
@@ -53,7 +50,7 @@ abstract class Controller
                 } elseif ($this->request_uri[0] === 'get-user') {
                     return 'actionGetUser';
                 } else
-                    throw new RuntimeException('GET Route not found', 405);
+                    return 'actionError';
             case 'PUT':
             case 'POST':
                 if (($this->request_uri[0] . '/' . $this->request_uri[1]) === 'user/update') {
@@ -67,9 +64,11 @@ abstract class Controller
 
     abstract protected function actionIndex();
 
-    abstract protected function actionAuth($login, $password);
+    abstract protected function actionAuth();
 
-    abstract protected function actionGetUser($username, $token);
+    abstract protected function actionGetUser();
 
-    abstract protected function actionUpdateUser($data);
+    abstract protected function actionUpdateUser();
+
+    abstract protected function actionError();
 }
