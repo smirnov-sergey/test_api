@@ -19,8 +19,7 @@ abstract class Controller
 
     public function __construct()
     {
-//        $this->client = new Client(['base_uri' => 'http://testapi.ru']);
-        $this->client = new Client(['base_uri' => 'http://httpbin.org']);
+        $this->client = new Client(['base_uri' => 'http://testapi.ru']);
 
         $this->request_uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
         $this->request_params = $_REQUEST;

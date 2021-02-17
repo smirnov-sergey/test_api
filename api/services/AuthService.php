@@ -5,6 +5,11 @@ namespace api\services;
 use Exception;
 use RuntimeException;
 
+/**
+ * Class AuthService
+ * @package api\services
+ * @deprecated
+ */
 class AuthService
 {
     private const LOGIN = 'test';

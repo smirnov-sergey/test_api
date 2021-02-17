@@ -11,48 +11,30 @@ class SiteController extends Controller
 {
     public function actionIndex()
     {
-//        $client = new Client(['base_uri' => 'http://localhost/api', ['timeout' => 2]]);
-//        $client = new Client(['base_uri' => 'http://localhost/api']);
-//        $client = new Client();
-//        $response = $client->get('http://localhost/api/auth');
-//        $request = new Request('GET', 'http://localhost/api/auth');
-//        $response = $client->send($request, ['timeout' => 2]);
-//
-//        var_dump($response->getBody());
-//        die();
-//        $response = $client->request('GET', '/auth', [
-//            'query' => [
-//                'login' => 'ivan',
-//                'password' => '12345'
-//            ],
-//            'headers' => [
-//                'Access-Control-Allow-Origin' => '*',
-//                'Access-Control-Allow-Methods' => '*',
-//                'Content-Type' => 'application/json'
-//            ]
-//        ]);
-//
-//        $response->getBody();
-//        var_dump($response);
-//        die();
-
         return 'actionIndex';
     }
 
     public function actionAuth()
     {
-//        $response = $this->client->request('GET', '/auth', [
-//            'query' => [
-//                'login' => $login,
-//                'password' => $password
-//            ],
-//            'headers' => [
-//                'Access-Control-Allow-Origin' => '*',
-//                'Access-Control-Allow-Methods' => '*',
-//                'Content-Type' => 'application/json'
-//            ]
-//        ]);
-//        $this->client->request('GET', '/auth', ['auth' => ['login', 'password']]);
+        /**
+         * тест Guzzle -> 'http://httpbin.org'. Успешно
+         */
+//        $client = new Client(['base_uri' => 'http://httpbin.org']);
+//        $response = $client->request('GET');
+//        var_dump($response);
+
+        $response = $this->client->request('GET', '/auth', [
+            'query' => [
+                'login' => 'ivan',
+                'password' => '12345'
+            ],
+            'headers' => [
+                'Access-Control-Allow-Origin' => '*',
+                'Access-Control-Allow-Methods' => '*',
+                'Content-Type' => 'application/json'
+            ]
+        ]);
+        var_dump($response->getBody());
 
         return 'actionAuth';
     }
@@ -61,8 +43,8 @@ class SiteController extends Controller
     {
 //        $response = $this->client->request('POST', '/get-user', [
 //            'query' => [
-//                'token' => $token,
-//                'username' => $username,
+//                  'username' => ivan,
+//                  'token' => dsfd79843r32d1d3dx23d32d,
 //            ],
 //            'json' => [
 //                'status' => 'OK',
@@ -77,9 +59,7 @@ class SiteController extends Controller
 //                ]
 //            ]
 //        ]);
-//
-//        // token должен быть первым параметром после / get - user /
-//    $token = array_shift($this->request_uri);
+
         return 'actionGetUser';
     }
 
