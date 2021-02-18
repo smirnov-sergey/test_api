@@ -2,18 +2,10 @@
 
 namespace api\services;
 
-use Exception;
-use RuntimeException;
-
-/**
- * Class AuthService
- * @package api\services
- * @deprecated
- */
 class AuthService
 {
-    private const LOGIN = 'test';
-    private const PASSWORD = 12345;
+    private const LOGIN = 'user';
+    private const PASSWORD = '12345';
     private const TOKEN = 'dsfd79843r32d1d3dx23d32d';
 
 
@@ -28,20 +20,21 @@ class AuthService
     }
 
     /**
+     * @param $login
+     * @return bool
+     */
+    public function checkLogin($login): bool
+    {
+        return $login === self::LOGIN;
+    }
+
+    /**
      * @param $token
      * @return bool
      */
     public function checkToken($token): bool
     {
-        try {
-            if ($token === self::TOKEN) {
-                return true;
-            }
-
-            throw new RuntimeException('Invalid token', 401);
-        } catch (Exception $e) {
-            throw $e;
-        }
+        return $token === self::TOKEN;
     }
 
     /**

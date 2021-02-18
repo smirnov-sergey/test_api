@@ -1,6 +1,7 @@
 {
-    "require": {
-        "guzzlehttp/guzzle": "7.0",
-        "ext-json": "*"
-    }
+  "require": {
+    "guzzlehttp/guzzle": "7.0",
+    "ext-json": "*",
+    "ext-http": "*"
+  }
 }

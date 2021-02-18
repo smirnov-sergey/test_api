@@ -14,7 +14,7 @@
 Для работы с api необходимо изначально произвести авторизацию по адресу http://testapi.ru/auth
 * метод GET
 * параметры login и password
-* где login=test, password=12345
+* где login=user, password=12345
 
 Результатом будет json, в котором будет содержаться token ответ:
 ```
@@ -25,11 +25,11 @@
 ```
 
 ### 2. Получение данных пользователя
-Так же api предоставляет возможность получения данные пользователя по адресу http://testapi.ru/api/get-user/?login=****&token=****
+Так же api предоставляет возможность получения данные пользователя по адресу http://testapi.ru/get-user/?login=****&token=****
 
 * метод GET
-* login = ivan
-* token = токен полученный при авторизации
+* login = user
+* token = токен, полученный при авторизации
 
 Результатом будет json, в котором будут содержаться данные пользователя ответ:
 ```
@@ -41,24 +41,14 @@
     "id": 23,
     "name": "Ivanov Ivan",
     "permissions": [
-        {
-            "id": 1,
-            "permission": "comment"
-        },
-        {
-            "id": 2,
-            "permission": "upload photo"
-        },
-        {
-            "id": 3,
-            "permission": "add event"
-        }
+        "id": 1,
+        "permission": "comment"
     ]
 }
 ```
 
 ### 3. Отправка данных пользователя
-И api предоставляет возможность обновить данные пользователя по адресу http://testapi.ru/api/user/update?token=****
+api предоставляет возможность обновить данные пользователя по адресу http://testapi.ru/update/user?token=****
 
 * метод POST
 * тело запроса
