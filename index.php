@@ -10,7 +10,7 @@ require_once 'controllers/SiteController.php';
 
 $request_api = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 
-if ($request_api[0] == 'api') {
+if ($request_api[0] === 'api') {
     $api = new ApiController();
     echo $api->run();
 } else {

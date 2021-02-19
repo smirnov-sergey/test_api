@@ -29,14 +29,12 @@ class ApiController
         $this->request_uri = explode('?', $_SERVER['REQUEST_URI']);
         $this->request_method = $_SERVER['REQUEST_METHOD'];
 
-        if ($this->request_method === 'GET') {
-            $this->login = $_GET['login'];
-            $this->password = $_GET['password'];
-            $this->token = $_GET['token'];
-        } elseif ($this->request_method === 'POST') {
-            $this->login = $_POST['login'];
-            $this->password = $_POST['password'];
-            $this->token = $_GET['token'];
+        if ($this->request_method === 'GET' || $this->request_method === 'POST') {
+            $method = $this->request_method === 'GET' ? $_GET : $_POST;
+
+            $this->login = $method['login'];
+            $this->password = $method['password'];
+            $this->token = $method['token'];
         }
     }
 
@@ -63,9 +61,7 @@ class ApiController
                     return 'actionError';
             case 'PUT':
             case 'POST':
-                $request_uri = ($this->request_uri[0] . '/' . $this->request_uri[1] . '/' . $this->request_uri[2]);
-
-                if ($request_uri === '/api/update/user') {
+                if ($this->request_uri[0] === '/api/update/user') {
                     return 'actionUpdateUser';
                 }
                 break;
@@ -90,13 +86,21 @@ class ApiController
      *
      * @return false|string
      */
-    public function actionAuth()
+    private function actionAuth()
     {
-        if ($this->auth_service->checkAuth($this->login, $this->password)) {
-            return $this->responseAuth(200);
+        if ($this->request_method === 'GET') {
+            if ($this->login && $this->password) {
+                if ($this->auth_service->checkAuth($this->login, $this->password)) {
+                    return $this->responseAuth(200);
+                }
+
+                return $this->responseAuth(401);
+            }
+
+            return json_encode(['error' => 'Login or password missing'], JSON_PRETTY_PRINT);
         }
 
-        return $this->responseAuth(401);
+        return json_encode(['error' => 'Invalid method'], JSON_PRETTY_PRINT);
     }
 
     /**
@@ -120,21 +124,21 @@ class ApiController
      *
      * @return false|string
      */
-    public function actionGetUser()
+    private function actionGetUser()
     {
         if ($this->request_method === 'GET') {
             if ($this->login && $this->token) {
                 if ($this->auth_service->checkLogin($this->login) && $this->auth_service->checkToken($this->token)) {
                     return $this->responseGetUser(200);
-                } else {
-                    return json_encode(['error' => 'Invalid login or token'], JSON_PRETTY_PRINT);
                 }
-            } else {
-                return json_encode(['error' => 'Login or token missing'], JSON_PRETTY_PRINT);
+
+                return json_encode(['error' => 'Invalid login or token'], JSON_PRETTY_PRINT);
             }
-        } else {
-            return json_encode(['error' => 'Invalid method'], JSON_PRETTY_PRINT);
+
+            return json_encode(['error' => 'Login or token missing'], JSON_PRETTY_PRINT);
         }
+
+        return json_encode(['error' => 'Invalid method'], JSON_PRETTY_PRINT);
     }
 
     /**
@@ -152,26 +156,42 @@ class ApiController
      *  permissions
      * )
      *
-     * @param $data
      * @return false|int|string
      */
-    public function actionUpdateUser($data)
+    private function actionUpdateUser()
     {
-//        // token должен быть первым параметром
-//        $token = array_shift($this->request_uri);
-//
-//        if ($this->request_method === 'POST') {
-//            if ($token) {
-//                if ($this->auth_service->checkToken($token)) {
-//                    return $this->responseUserUpdate($data);
-//                }
-//            }
-//        }
-//
-//        throw new RuntimeException('There are no incoming parameters');
+        if ($this->request_method === 'POST' || $this->request_method === 'PUT') {
+            $login = $this->request_params['login'];
+            $token = $this->request_params['token'];
+            $data = $this->request_params['data'];
+
+            if ($login && $token) {
+                if ($this->auth_service->checkLogin($login) && $this->auth_service->checkToken($token)) {
+                    if ($data) {
+                        $filename = "data.txt";
+
+                        if (!file_put_contents($filename, json_encode($data))) {
+                            return json_encode(['error' => 'File not written'], JSON_PRETTY_PRINT);
+                        }
+
+                        $request_status = $this->requestStatus(200);
+
+                        return json_encode(['status' => $request_status], JSON_PRETTY_PRINT);
+                    }
+
+                    return json_encode(['error' => 'No data to write'], JSON_PRETTY_PRINT);
+                }
+
+                return json_encode(['error' => 'Invalid login or token'], JSON_PRETTY_PRINT);
+            }
+
+            return json_encode(['error' => 'Login or token missing'], JSON_PRETTY_PRINT);
+        }
+
+        return json_encode(['error' => 'Invalid method'], JSON_PRETTY_PRINT);
     }
 
-    public function actionError()
+    private function actionError()
     {
         return 'Page not found';
     }
@@ -214,26 +234,6 @@ class ApiController
         }
 
         throw new RuntimeException('Invalid status');
-    }
-
-    private function responseUpdateUser($data)
-    {
-        if ($data) {
-            $data = [
-                'status' => 'OK',
-                'active' => '1',
-                'blocked' => true,
-                'name' => 'Petr Petrovich',
-                'permissions' => [
-                    'id' => 1,
-                    'permission' => 'comment'
-                ]
-            ];
-
-            return json_encode($data);
-        }
-
-        throw new RuntimeException('No data available');
     }
 
     private function requestStatus($code): string
